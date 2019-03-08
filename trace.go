@@ -1,3 +1,5 @@
+// Package echotrace enables golang.org/x/net/trace based request tracing for
+// echo based servers.
 package echotrace
 
 import (
@@ -8,9 +10,13 @@ import (
 )
 
 const (
+	// ContextKey is the key used to lookup the trace.Trace for the current
+	// request from the echo.Context.
 	ContextKey = "trace-context-key"
 )
 
+// Middleware is a echo.MiddlewareFunc that creates a new trace.Trace for the
+// current request and sets in on the echo.Context.
 func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		tr := trace.New(c.Request().Method+" "+c.Request().URL.Path, c.Request().URL.String())
@@ -26,4 +32,5 @@ func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+// Handler is a echo.HandlerFunc that serves the page of traces.
 var Handler = echo.WrapHandler(http.HandlerFunc(trace.Traces))
