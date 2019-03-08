@@ -27,6 +27,9 @@ func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			tr.LazyPrintf("Error: [%v]", err)
 			tr.SetError()
+		} else if status := c.Response().Status; status != http.StatusOK {
+			tr.LazyPrintf("Error: Code=%d", status)
+			tr.SetError()
 		}
 		return err
 	}

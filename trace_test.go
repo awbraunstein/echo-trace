@@ -51,6 +51,18 @@ func TestMiddleware(t *testing.T) {
 		t.Fatalf("Expected ERROR, but got: %s", got)
 	}
 
+	// Tests invalid url request.
+	req = httptest.NewRequest(http.MethodGet, "/invalid", nil)
+	rec = httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("Expected 404 status, but got %d", rec.Code)
+	}
+	want := "{\"message\":\"Not Found\"}\n"
+	if got := rec.Body.String(); got != want {
+		t.Fatalf("Expected %s, but got: %s", want, got)
+	}
+
 	// Tests debug/requests handler is installed.
 	req = httptest.NewRequest(http.MethodGet, "/debug/requests", nil)
 	rec = httptest.NewRecorder()
